@@ -21,6 +21,16 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+
+    const db = client.db("zap_shift_db");
+    const parcelsCollection = db.collection("parcels");
+
+    app.post("/parcels", async (req, res) => {
+      const parcel = req.body;
+      const result = await parcelsCollection.insertOne(parcel);
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
@@ -30,8 +40,8 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get("/server", (req, res) => {
-  res.send("server runninggggg");
+app.get("/", (req, res) => {
+  res.send("Zap-Shift-Server runninggggg");
 });
 
 app.listen(port, () => {
